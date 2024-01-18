@@ -3,7 +3,7 @@
 int main(int argc, char *argv[])
 {
     FILE *file;
-    int line_number;
+    int line_number = 0;
     char opcode[256];
     char *endptr;
     int value;
@@ -20,8 +20,6 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Error: Can't open file %s\n", argv[1]);
         return EXIT_FAILURE;
     }
-
-    line_number = 0;
 
     while (fscanf(file, "%s", opcode) != EOF)
     {
@@ -40,9 +38,9 @@ int main(int argc, char *argv[])
                     return EXIT_FAILURE;
                 }
 
-                value = strtol(opcode, &endptr, 10);
+                value = atoi(opcode);
 
-                if (*endptr != '\0')
+                if (value == 0 && *opcode != '0')
                 {
                     fprintf(stderr, "L%d: usage: push integer\n", line_number);
                     fclose(file);

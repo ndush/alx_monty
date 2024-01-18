@@ -38,9 +38,9 @@ int main(int argc, char *argv[])
                     return EXIT_FAILURE;
                 }
 
-                value = atoi(opcode);
+                value = strtol(opcode, &endptr, 10);
 
-                if (value == 0 && *opcode != '0')
+                if (*endptr != '\0')
                 {
                     fprintf(stderr, "L%d: usage: push integer\n", line_number);
                     fclose(file);

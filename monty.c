@@ -31,7 +31,7 @@ void push(stack_t **stack, int value)
  */
 void pall(stack_t *stack)
 {
-	stack_t *current; /* Move the declaration to the beginning */
+	stack_t *current;
 
 	current = stack;
 
@@ -41,4 +41,23 @@ void pall(stack_t *stack)
 		current = current->next;
 	}
 }
+
+/**
+ * free_stack - Function to free the entire stack.
+ * @stack: Pointer to the top of the stack.
+ */
+void free_stack(stack_t *stack)
+{
+	stack_t *current, *temp;
+
+	current = stack;
+	while (current != NULL)
+	{
+		temp = current;
+		current = current->next;
+		free(temp);
+	}
+}
+
+
 

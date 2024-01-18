@@ -1,10 +1,11 @@
 #include "monty.h"
 
 /**
- * push - Function to push a value onto the stack
- * @value: The integer value to push
+ * push - Function to push a value onto the stack.
+ * @stack: Pointer to the top of the stack.
+ * @value: Integer value to be pushed onto the stack.
  */
-void push(int value)
+void push(stack_t **stack, int value)
 {
 	stack_t *new_node = malloc(sizeof(stack_t));
 
@@ -16,20 +17,23 @@ void push(int value)
 
 	new_node->n = value;
 	new_node->prev = NULL;
-	new_node->next = global_stack;
+	new_node->next = *stack;
 
-	if (global_stack != NULL)
-		global_stack->prev = new_node;
+	if (*stack != NULL)
+		(*stack)->prev = new_node;
 
-	global_stack = new_node;
+	*stack = new_node;
 }
 
 /**
- * pall - Function to print all values in the stack
+ * pall - Function to print all values in the stack.
+ * @stack: Pointer to the top of the stack.
  */
-void pall(void)
+void pall(stack_t *stack)
 {
-	stack_t *current = global_stack;
+	stack_t *current; /* Move the declaration to the beginning */
+
+	current = stack;
 
 	while (current != NULL)
 	{

@@ -1,19 +1,18 @@
 #include "monty.h"
 
-void heybetty(void);
-
 /**
- * main - Entry point for the Monty interpreter
- * @argc: Number of command-line arguments
- * @argv: Array of command-line arguments
- * Return: EXIT_SUCCESS on success, EXIT_FAILURE on failure
+ * main - Entry point for the Monty interpreter.
+ * @argc: Number of command-line arguments.
+ * @argv: Array of command-line arguments.
+ * Return: EXIT_SUCCESS on success, EXIT_FAILURE on failure.
  */
+void b(void);
 int main(int argc, char *argv[])
 {
+	stack_t *global_stack = NULL;
 	FILE *file;
 	int line_number = 0;
 	char opcode[256];
-	char *endptr;
 	int value;
 
 	if (argc != 2)
@@ -39,28 +38,19 @@ int main(int argc, char *argv[])
 				switch (opcode[1])
 				{
 					case 'u':
-						if (fscanf(file, "%s", opcode) == EOF)
+						if (fscanf(file, "%d", &value) == EOF)
 						{
 							fprintf(stderr, "L%d: usage: push integer\n", line_number);
 							fclose(file);
 							return (EXIT_FAILURE);
 						}
 
-						value = strtol(opcode, &endptr, 10);
-
-						if (*endptr != '\0')
-						{
-							fprintf(stderr, "L%d: usage: push integer\n", line_number);
-							fclose(file);
-							return (EXIT_FAILURE);
-						}
-
-						push(value);
+						push(&global_stack, value);
 						break;
 
 					case 'a':
 						if (global_stack != NULL)
-							pall();
+							pall(global_stack);
 						break;
 
 					default:

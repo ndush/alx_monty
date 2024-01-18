@@ -1,4 +1,3 @@
-/* monty.h */
 
 #ifndef MONTY_H
 #define MONTY_H
@@ -22,4 +21,3 @@ void pall(void);
 extern stack_t *global_stack;
 
 #endif /* MONTY_H */
-

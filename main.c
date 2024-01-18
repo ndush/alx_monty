@@ -5,6 +5,7 @@ int main(int argc, char *argv[])
     FILE *file;
     int line_number;
     char opcode[256];
+    char *endptr;
     int value;
 
     if (argc != 2)
@@ -32,17 +33,28 @@ int main(int argc, char *argv[])
             switch (opcode[1])
             {
             case 'u':
-                if (fscanf(file, "%d", &value) != 1)
+                if (fscanf(file, "%s", opcode) == EOF)
                 {
                     fprintf(stderr, "L%d: usage: push integer\n", line_number);
                     fclose(file);
                     return EXIT_FAILURE;
                 }
+
+                value = strtol(opcode, &endptr, 10);
+
+                if (*endptr != '\0')
+                {
+                    fprintf(stderr, "L%d: usage: push integer\n", line_number);
+                    fclose(file);
+                    return EXIT_FAILURE;
+                }
+
                 push(value);
                 break;
 
             case 'a':
-                pall();
+                if (global_stack != NULL)
+                    pall();
                 break;
 
             default:

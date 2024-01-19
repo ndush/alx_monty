@@ -1,17 +1,20 @@
 #ifndef MONTY_H
 #define MONTY_H
+#define _GNU_SOURCE
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <ctype.h>
+#include <string.h>
 
 /**
  * struct stack_s - doubly linked list representation of a stack (or queue)
- * @n: integer value stored in the node
- * @prev: pointer to the previous element in the stack (or queue)
- * @next: pointer to the next element in the stack (or queue)
+ * @n: integer
+ * @prev: points to the previous element of the stack (or queue)
+ * @next: points to the next element of the stack (or queue)
  *
- * Description: This structure represents each element in a doubly linked
- * list used as a stack (or queue) in the Monty language interpreter.
+ * Description: doubly linked list node structure
+ * for stack, queues, LIFO, FIFO
  */
 typedef struct stack_s
 {
@@ -25,8 +28,8 @@ typedef struct stack_s
  * @opcode: the opcode
  * @f: function to handle the opcode
  *
- * Description: This structure associates an opcode with its corresponding
- * function to execute in the Monty language interpreter.
+ * Description: opcode and its function
+ * for stack, queues, LIFO, FIFO
  */
 typedef struct instruction_s
 {
@@ -34,10 +37,20 @@ typedef struct instruction_s
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-extern stack_t *global_stack;
-
 void push(stack_t **stack, int value);
-void pall(stack_t *stack);
+void pall(stack_t **stack);
+void pint(stack_t **stack);
+void pop(stack_t **stack);
+void swap(stack_t **stack);
+void add(stack_t **stack);
+void nop(stack_t **stack);
+void execute_opcode(char *opcode, char *arg,
+stack_t **stack, unsigned int line_number);
+void process_monty_file(const char *filename);
 
-#endif
+extern stack_t *stack;
+extern unsigned int line_number;
+extern stack_t *stack;
+extern unsigned int line_number;
+#endif /* MONTY_H */
 

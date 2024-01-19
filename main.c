@@ -6,9 +6,8 @@
  * @argc: Number of command-line arguments
  * @argv: Array of command-line argument strings
  *
- * Return: success
+ * Return: Success or failure status
  */
-
 int main(int argc, char *argv[])
 {
 	if (argc != 2)

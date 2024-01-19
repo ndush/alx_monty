@@ -1,6 +1,9 @@
 #ifndef MONTY_H
 #define MONTY_H
+
 #define _GNU_SOURCE
+#define STACK 0
+#define QUEUE 1
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -37,20 +40,23 @@ typedef struct instruction_s
 	void (*f)(stack_t **stack, unsigned int line_number);
 } instruction_t;
 
-void push(stack_t **stack, int value);
+int is_numeric(char *str);
+void push(stack_t **stack, int value, unsigned int line_number);
 void pall(stack_t **stack);
-void pint(stack_t **stack);
-void pop(stack_t **stack);
-void swap(stack_t **stack);
-void add(stack_t **stack);
+void pint(stack_t **stack, unsigned int line_number);
+void pop(stack_t **stack, unsigned int line_number);
+void swap(stack_t **stack, unsigned int line_number);
+void add(stack_t **stack, unsigned int line_number);
 void nop(stack_t **stack);
+void sub(stack_t **stack, unsigned int line_number);
+
 void execute_opcode(char *opcode, char *arg,
-stack_t **stack, unsigned int line_number);
+		stack_t **stack, unsigned int line_number);
 void process_monty_file(const char *filename);
 
 extern stack_t *stack;
 extern unsigned int line_number;
-extern stack_t *stack;
-extern unsigned int line_number;
+extern int stack_mode;
+
 #endif /* MONTY_H */
 

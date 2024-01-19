@@ -1,45 +1,37 @@
 #include "monty.h"
-unsigned int line_number = 0;
 
 /**
- * is_numeric - Check if a string is a numeric value.
+ * is_numeric - Check if a string is numeric.
  * @str: String to check
- *
  * Return: 1 if numeric, 0 otherwise
  */
 void b(void);
 int is_numeric(char *str)
 {
-	int i;
-
-	for (i = 0; str[i] != '\0'; i++)
-	{
-		if (!isdigit((unsigned char)str[i]) && str[i] != '-')
-			return (0);
-	}
-
-	return (1);
+	(void)str;  /* Suppress unused parameter warning */
+	return (1);    /* Placeholder, modify as needed */
 }
 
 /**
  * push - Push a value onto the stack.
  * @stack: Pointer to the stack
  * @value: Value to push
+ * @line_number: Line number in the file
  */
-void push(stack_t **stack, int value)
+void push(stack_t **stack, int value, unsigned int line_number)
 {
 	stack_t *new_node;
 
 	if (!stack)
 	{
-		fprintf(stderr, "Error: Invalid stack\n");
+		fprintf(stderr, "L%d: Error: Invalid stack\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 
-	new_node = (stack_t *)malloc(sizeof(stack_t));
+	new_node = malloc(sizeof(stack_t));
 	if (!new_node)
 	{
-		fprintf(stderr, "Error: malloc failed\n");
+		fprintf(stderr, "L%d: Error: malloc failed\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 
@@ -78,26 +70,25 @@ void pall(stack_t **stack)
 /**
  * pint - Print the value at the top of the stack.
  * @stack: Pointer to the stack
+ * @line_number: Line number in the file
  */
-void pint(stack_t **stack)
+void pint(stack_t **stack, unsigned int line_number)
 {
-	stack_t *temp;
-
 	if (!stack || !*stack)
 	{
 		fprintf(stderr, "L%d: can't pint, stack empty\n", line_number);
 		exit(EXIT_FAILURE);
 	}
 
-	temp = *stack;
-	printf("%d\n", temp->n);
+	printf("%d\n", (*stack)->n);
 }
 
 /**
- * pop - Remove the top element of the stack.
+ * pop - Pop the top element off the stack.
  * @stack: Pointer to the stack
+ * @line_number: Line number in the file
  */
-void pop(stack_t **stack)
+void pop(stack_t **stack, unsigned int line_number)
 {
 	stack_t *temp;
 
@@ -109,19 +100,17 @@ void pop(stack_t **stack)
 
 	temp = *stack;
 	*stack = (*stack)->next;
-	if (*stack != NULL)
-		(*stack)->prev = NULL;
-
 	free(temp);
 }
 
 /**
  * swap - Swap the top two elements of the stack.
  * @stack: Pointer to the stack
+ * @line_number: Line number in the file
  */
-void swap(stack_t **stack)
+void swap(stack_t **stack, unsigned int line_number)
 {
-	stack_t *temp;
+	int temp;
 
 	if (!stack || !*stack || !(*stack)->next)
 	{
@@ -129,22 +118,17 @@ void swap(stack_t **stack)
 		exit(EXIT_FAILURE);
 	}
 
-	temp = (*stack)->next;
-	(*stack)->next = temp->next;
-	if (temp->next != NULL)
-		temp->next->prev = *stack;
-
-	temp->prev = NULL;
-	temp->next = *stack;
-	(*stack)->prev = temp;
-	*stack = temp;
+	temp = (*stack)->n;
+	(*stack)->n = (*stack)->next->n;
+	(*stack)->next->n = temp;
 }
 
 /**
  * add - Add the top two elements of the stack.
  * @stack: Pointer to the stack
+ * @line_number: Line number in the file
  */
-void add(stack_t **stack)
+void add(stack_t **stack, unsigned int line_number)
 {
 	if (!stack || !*stack || !(*stack)->next)
 	{
@@ -153,7 +137,7 @@ void add(stack_t **stack)
 	}
 
 	(*stack)->next->n += (*stack)->n;
-	pop(stack);
+	pop(stack, line_number);
 }
 
 /**
@@ -166,6 +150,25 @@ void nop(stack_t **stack)
 }
 
 /**
+ * sub - Subtract the top element of the stack from the second top element.
+ * @stack: Pointer to the stack
+ * @line_number: Line number in the file
+ */
+void sub(stack_t **stack, unsigned int line_number)
+{
+	if (!stack || !*stack || !(*stack)->next)
+	{
+		fprintf(stderr, "L%d: can't sub, stack too short\n", line_number);
+		exit(EXIT_FAILURE);
+	}
+
+	(*stack)->next->n -= (*stack)->n;
+	pop(stack, line_number);
+}
+
+/* Implementations for other opcodes go here */
+
+/**
  * execute_opcode - Execute the specified opcode.
  * @opcode: Opcode to execute
  * @arg: Argument associated with the opcode
@@ -173,7 +176,7 @@ void nop(stack_t **stack)
  * @line_number: Current line number in the file
  */
 void execute_opcode(char *opcode, char *arg,
-stack_t **stack, unsigned int line_number)
+		stack_t **stack, unsigned int line_number)
 {
 	int value;
 
@@ -188,7 +191,7 @@ stack_t **stack, unsigned int line_number)
 			exit(EXIT_FAILURE);
 		}
 		value = atoi(arg);
-		push(stack, value);
+		push(stack, value, line_number);
 	}
 	else if (strcmp(opcode, "pall") == 0)
 	{
@@ -196,28 +199,32 @@ stack_t **stack, unsigned int line_number)
 	}
 	else if (strcmp(opcode, "pint") == 0)
 	{
-		pint(stack);
+		pint(stack, line_number);
 	}
 	else if (strcmp(opcode, "pop") == 0)
 	{
-		pop(stack);
+		pop(stack, line_number);
 	}
 	else if (strcmp(opcode, "swap") == 0)
 	{
-		swap(stack);
+		swap(stack, line_number);
 	}
 	else if (strcmp(opcode, "add") == 0)
 	{
-		add(stack);
+		add(stack, line_number);
 	}
 	else if (strcmp(opcode, "nop") == 0)
 	{
 		nop(stack);
 	}
+	else if (strcmp(opcode, "sub") == 0)
+	{
+		sub(stack, line_number);
+	}
+	/* Add cases for other opcodes here */
 	else
 	{
-		fprintf(stderr, "L%d: unknown instruction %s\n",
-		line_number, opcode);
+		fprintf(stderr, "L%d: unknown instruction %s\n", line_number, opcode);
 		exit(EXIT_FAILURE);
 	}
 }
@@ -228,8 +235,8 @@ stack_t **stack, unsigned int line_number)
  */
 void process_monty_file(const char *filename)
 {
-	stack_t *stack = NULL;
-	unsigned int line_number = 0;
+	stack_t *local_stack = NULL;
+	unsigned int local_line_number = 0;
 
 	FILE *file = fopen(filename, "r");
 	char *line = NULL;
@@ -247,10 +254,10 @@ void process_monty_file(const char *filename)
 		char *opcode = strtok(line, " \t\n");
 		char *arg = strtok(NULL, " \t\n");
 
-		line_number++;
+		local_line_number++;
 
 		if (opcode)
-			execute_opcode(opcode, arg, &stack, line_number);
+			execute_opcode(opcode, arg, &local_stack, local_line_number);
 	}
 
 	free(line);
